@@ -59,37 +59,44 @@ Code Overview
 
 The code reads temperature and humidity data from the DHT sensor using the DHT library. It then displays the readings on the serial monitor or LCD screen.
 
-Example Code
+Example Code:-
+const int analogIn = A0;
+int humiditysensorOutput = 0;
+// Defining Variables
+int RawValue= 0;
+double Voltage = 0;
+double tempC = 0;
+double tempF = 0;
 
-#include <DHT.h>
-
-#define DHT_PIN 2  // Set DHT data pin
-#define DHT_TYPE DHT11  // Set DHT sensor type
-
-DHT dht(DHT_PIN, DHT_TYPE);
-
-void setup() {
+void setup(){  
   Serial.begin(9600);
-  dht.begin();
-  // Initialize LCD screen (if using)
+  pinMode(A1, INPUT);
 }
 
-void loop() {
-  int temperature = dht.readTemperature();
-  int humidity = dht.readHumidity();
+void loop(){
   
-  Serial.print("Temperature: ");
-  Serial.print(temperature);
-  Serial.println("°C");
-  
-  Serial.print("Humidity: ");
-  Serial.print(humidity);
+  RawValue = analogRead(analogIn);
+  Voltage = (RawValue / 1023.0) * 5000; // 5000 to get millivots.
+  tempC = (Voltage-500) * 0.1; // 500 is the offset
+  tempF = (tempC * 1.8) + 32; // convert to F  
+  Serial.print("Raw Value = " );                  
+  Serial.print(RawValue);      
+  Serial.print("\t milli volts = ");
+  Serial.print(Voltage,0); //
+  Serial.print("\t Temperature in C = ");
+  Serial.print(tempC,1);
+  Serial.print("\t Temperature in F = ");
+  Serial.println(tempF,1);
+  humiditysensorOutput = analogRead(A1);
+  Serial.print("Humidity: "); // Printing out Humidity Percentage
+  Serial.print(map(humiditysensorOutput, 0, 1023, 10, 70));
   Serial.println("%");
-  
-  // Display readings on LCD screen (if using)
-  
-  delay(1000); // Update readings every 1 second
+
+  delay(5000);  //iterate every 5 seconds
+
 }
+
+  
 
 Project Applications
 
